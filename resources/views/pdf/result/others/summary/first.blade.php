@@ -133,143 +133,300 @@
                             $cos = [];
                             $absents = [];
                             $co_students = [];
+                            $withhold_check = App\Models\ResultSettings::where('institution_id', $institution->id)->first();
                         @endphp
 
                         <tbody>
-                            @foreach ($students as $key => $student)
+                            @if($withhold_check->withhold == 1)
 
-                                @php
-                                    $courses = App\Models\CRF::where('institution_id', $institution->id)
-                                            ->where('user_id', $student->user_id)
-                                            ->where('level_order', 1)
-                                            ->where('semester', 'first')
-                                            ->get();
-                                @endphp
+                                    @foreach ($students as $key => $student)
 
-                                @foreach($courses as $course)
-                                
                                     @php
-                                        $exam = App\Models\Mark::where('institution_id',$institution->id)
-                                                            ->where('course_id',$course->course_id)
-                                                            ->where('user_id', $student->user_id)
-                                                            ->where('type','exam')
-                                                            ->first();
-                                        $ca = App\Models\Mark::where('institution_id',$institution->id)
-                                                            ->where('course_id', $course->course_id)
-                                                            ->where('user_id', $student->user_id)
-                                                            ->where('type','!=','exam')
-                                                            ->sum('marks');
-                                        
-                                        
-                                        if($exam->absent == 'absent')
-                                        {
-                                            array_push($absents, $exam->course_id);
-                                        }
-
-                                        $total_score = $exam->marks + $ca;
-                                        if($total_score <= 39){
-                                            $total_co += $course['course']['credit_unit'];
-                                            array_push($cos, $course['course']['course_code']);
-                                            array_push($co_students, $student->user_id);
-
-                                            $data = App\Models\StoredCO::where('institution_id',$institution->id)
-                                                                        ->where('level_order',1)
-                                                                        ->where('semester','first')
-                                                                        ->where('user_id', $student->user_id)
-                                                                        ->where('course_id', $course->course_id)
-                                                                        ->first();
-                                            if(!$data)
-                                            {
-                                                $data = new App\Models\StoredCO();
-                                                $data->institution_id = $institution->id;
-                                                $data->level_order = 1;
-                                                $data->semester = 'first';
-                                                $data->user_id = $student->user_id;
-                                                $data->course_id = $course->course_id;
-                                                $data->save();
-                            
-                                            }
-                                           
-                                        }
-
-                                        $grade_marks = App\Models\Grade::where([['start_mark','<=',(int)$total_score],['end_mark','>=',(int)$total_score]])->first();
-                                        $numerical_grade = @$grade_marks->numerical_grade;
-                                        $pe = (float)$numerical_grade*(float)$course['course']['credit_unit'];
-                                        $total_credits = $total_credits+$course['course']['credit_unit'];
-                                        $total_pe = (float)$total_pe+(float)$pe;
+                                    $payment_check = App\Models\StudentProgress::where('institution_id', $institution->id)
+                                                                            ->where('session_id', $session_id)
+                                                                            ->where('user_id', $student->user_id)
+                                                                            ->first();
                                     @endphp
-                                @endforeach
 
-                                <tr>
-                                    <td class="text-center">{{ $key + 1 }}</td>
-                                    <td class="text-left">{{ $student['student']['first_name'] }} {{ $student['student']['middle_name'] }} {{ $student['student']['last_name'] }}</td>
-                                    <td class="text-left">{{ $student['student']['reg_number'] }} </td>
-                                    <td class="text-center">{{ $total_credits }}</td>
-                                    <td class="text-center">{{ $total_pe }}</td>
+                                    @if( @$payment_check->payment != 1)
+                                    
+                                    <tr>
+                                        <td class="text-center">{{ $key + 1 }}</td>
+                                        <td class="text-left">{{ $student['student']['first_name'] }} {{ $student['student']['middle_name'] }} {{ $student['student']['last_name'] }}</td>
+                                        <td class="text-left">{{ $student['student']['reg_number'] }} </td>
+                                        <td colspan="5" style="background-color: #d89d9d9f; color:#fff; text-align:center">Result Witheld Due to Non-payment of Fees</td>
+                                    </tr>
+
+                                    @else
+                                    @php
+                                        $courses = App\Models\CRF::where('institution_id', $institution->id)
+                                                                ->where('user_id', $student->user_id)
+                                                                ->where('level_order', 1)
+                                                                ->where('semester', 'first')
+                                                                ->get();
+                                    @endphp
+
+                                    @foreach($courses as $course)
+                                    
                                         @php
-                                           $gpa = number_format($total_pe/$total_credits, 2);
+                                            $exam = App\Models\Mark::where('institution_id',$institution->id)
+                                                                ->where('course_id',$course->course_id)
+                                                                ->where('user_id', $student->user_id)
+                                                                ->where('type','exam')
+                                                                ->first();
+                                            $ca = App\Models\Mark::where('institution_id',$institution->id)
+                                                                ->where('course_id', $course->course_id)
+                                                                ->where('user_id', $student->user_id)
+                                                                ->where('type','!=','exam')
+                                                                ->sum('marks');
+                                            
+                                            
+                                            if($exam->absent == 'absent')
+                                            {
+                                                array_push($absents, $exam->course_id);
+                                            }
+
+                                            $total_score = $exam->marks + $ca;
+                                            if($total_score <= 39){
+                                                $total_co += $course['course']['credit_unit'];
+                                                array_push($cos, $course['course']['course_code']);
+                                                array_push($co_students, $student->user_id);
+
+                                                $data = App\Models\StoredCO::where('institution_id',$institution->id)
+                                                                            ->where('level_order',1)
+                                                                            ->where('semester','first')
+                                                                            ->where('user_id', $student->user_id)
+                                                                            ->where('course_id', $course->course_id)
+                                                                            ->first();
+                                                if(!$data)
+                                                {
+                                                    $data = new App\Models\StoredCO();
+                                                    $data->institution_id = $institution->id;
+                                                    $data->level_order = 1;
+                                                    $data->semester = 'first';
+                                                    $data->user_id = $student->user_id;
+                                                    $data->course_id = $course->course_id;
+                                                    $data->save();
+                                
+                                                }
+                                            
+                                            }
+
+                                            $grade_marks = App\Models\Grade::where([['start_mark','<=',(int)$total_score],['end_mark','>=',(int)$total_score]])->first();
+                                            $numerical_grade = @$grade_marks->numerical_grade;
+                                            $pe = (float)$numerical_grade*(float)$course['course']['credit_unit'];
+                                            $total_credits = $total_credits+$course['course']['credit_unit'];
+                                            $total_pe = (float)$total_pe+(float)$pe;
                                         @endphp
-                                    <td class="text-center">{{ $gpa }}</td>
-                                    <td>
-                                      @if (!empty($cos))
-                                        @foreach ($cos as $co)
-                                            {{$co}}@if(!$loop->last), @endif
-                                        @endforeach
-                                      @endif
-                                    </td>
-                                    <td>
-                                        @foreach ($absents as $absent)
-                                        @if($loop->first)Absent in @endif  @php $code = App\Models\Course::find($absent)->course_code @endphp {{ $code }} @if(!$loop->last), @endif
-                                        @endforeach
-                                    </td>
-                                </tr>
+                                    @endforeach
 
-                                @php
-                                $data = App\Models\StoredPoints::where('institution_id',$institution->id)->where('level_order',1)->where('semester','first')->where('user_id', $student->user_id)->first();
-                                    if($data)
-                                {
-                                    $data->tcr = $total_credits;
-                                    $data->tce = $total_credits-$total_co;
-                                    $data->tpe = $total_pe;
-                                    $data->gpa = $gpa;
-                                    if($cos == []){
-                                        $data->cos = '';
-                                    }else{
-                                        $data->cos = implode(',', $cos);
+                                    <tr>
+                                        <td class="text-center">{{ $key + 1 }}</td>
+                                        <td class="text-left">{{ $student['student']['first_name'] }} {{ $student['student']['middle_name'] }} {{ $student['student']['last_name'] }}</td>
+                                        <td class="text-left">{{ $student['student']['reg_number'] }} </td>
+                                        <td class="text-center">{{ $total_credits }}</td>
+                                        <td class="text-center">{{ $total_pe }}</td>
+                                            @php
+                                            $gpa = number_format($total_pe/$total_credits, 2);
+                                            @endphp
+                                        <td class="text-center">{{ $gpa }}</td>
+                                        <td>
+                                        @if (!empty($cos))
+                                            @foreach ($cos as $co)
+                                                {{$co}}@if(!$loop->last), @endif
+                                            @endforeach
+                                        @endif
+                                        </td>
+                                        <td>
+                                            @foreach ($absents as $absent)
+                                            @if($loop->first)Absent in @endif  @php $code = App\Models\Course::find($absent)->course_code @endphp {{ $code }} @if(!$loop->last), @endif
+                                            @endforeach
+                                        </td>
+                                    </tr>
+
+                                    @php
+                                    $data = App\Models\StoredPoints::where('institution_id',$institution->id)->where('level_order',1)->where('semester','first')->where('user_id', $student->user_id)->first();
+                                        if($data)
+                                    {
+                                        $data->tcr = $total_credits;
+                                        $data->tce = $total_credits-$total_co;
+                                        $data->tpe = $total_pe;
+                                        $data->gpa = $gpa;
+                                        if($cos == []){
+                                            $data->cos = '';
+                                        }else{
+                                            $data->cos = implode(',', $cos);
+                                        }
+                                        $data->update();
+                    
+                                    }else
+                                    {
+                                        $data = new App\Models\StoredPoints();
+                                        $data->institution_id = $institution->id;
+                                        $data->level_order = 1;
+                                        $data->semester = 'first';
+                                        $data->user_id = $student->user_id;
+                                        $data->tcr = $total_credits;
+                                        $data->tce = $total_credits-$total_co;
+                                        $data->tpe = $total_pe;
+                                        $data->gpa = $gpa;
+                                        if($cos == []){
+                                            $data->cos = '';
+                                        }else{
+                                            $data->cos = implode(',', $cos);
+                                        }
+                                        $data->save();
                                     }
-                                    $data->update();
-                
-                                }else
-                                {
-                                    $data = new App\Models\StoredPoints();
-                                    $data->institution_id = $institution->id;
-                                    $data->level_order = 1;
-                                    $data->semester = 'first';
-                                    $data->user_id = $student->user_id;
-                                    $data->tcr = $total_credits;
-                                    $data->tce = $total_credits-$total_co;
-                                    $data->tpe = $total_pe;
-                                    $data->gpa = $gpa;
-                                    if($cos == []){
-                                        $data->cos = '';
-                                    }else{
-                                        $data->cos = implode(',', $cos);
+                                
+                                    @endphp
+
+                                    @php
+                                        $total_pe = 0;
+                                        $total_credits = 0;
+                                        $total_co = 0;
+                                        $cos = [];
+                                        $absents = [];
+                                        // $co_students = [];
+                                    @endphp
+                                    @endif
+                                @endforeach
+                            @else
+                                @foreach ($students as $key => $student)
+
+
+                                    @php
+                                        $courses = App\Models\CRF::where('institution_id', $institution->id)
+                                                                ->where('user_id', $student->user_id)
+                                                                ->where('level_order', 1)
+                                                                ->where('semester', 'first')
+                                                                ->get();
+                                    @endphp
+
+                                    @foreach($courses as $course)
+                                    
+                                        @php
+                                            $exam = App\Models\Mark::where('institution_id',$institution->id)
+                                                                ->where('course_id',$course->course_id)
+                                                                ->where('user_id', $student->user_id)
+                                                                ->where('type','exam')
+                                                                ->first();
+                                            $ca = App\Models\Mark::where('institution_id',$institution->id)
+                                                                ->where('course_id', $course->course_id)
+                                                                ->where('user_id', $student->user_id)
+                                                                ->where('type','!=','exam')
+                                                                ->sum('marks');
+                                            
+                                            
+                                            if($exam->absent == 'absent')
+                                            {
+                                                array_push($absents, $exam->course_id);
+                                            }
+
+                                            $total_score = $exam->marks + $ca;
+                                            if($total_score <= 39){
+                                                $total_co += $course['course']['credit_unit'];
+                                                array_push($cos, $course['course']['course_code']);
+                                                array_push($co_students, $student->user_id);
+
+                                                $data = App\Models\StoredCO::where('institution_id',$institution->id)
+                                                                            ->where('level_order',1)
+                                                                            ->where('semester','first')
+                                                                            ->where('user_id', $student->user_id)
+                                                                            ->where('course_id', $course->course_id)
+                                                                            ->first();
+                                                if(!$data)
+                                                {
+                                                    $data = new App\Models\StoredCO();
+                                                    $data->institution_id = $institution->id;
+                                                    $data->level_order = 1;
+                                                    $data->semester = 'first';
+                                                    $data->user_id = $student->user_id;
+                                                    $data->course_id = $course->course_id;
+                                                    $data->save();
+                                
+                                                }
+                                            
+                                            }
+
+                                            $grade_marks = App\Models\Grade::where([['start_mark','<=',(int)$total_score],['end_mark','>=',(int)$total_score]])->first();
+                                            $numerical_grade = @$grade_marks->numerical_grade;
+                                            $pe = (float)$numerical_grade*(float)$course['course']['credit_unit'];
+                                            $total_credits = $total_credits+$course['course']['credit_unit'];
+                                            $total_pe = (float)$total_pe+(float)$pe;
+                                        @endphp
+                                    @endforeach
+
+                                    <tr>
+                                        <td class="text-center">{{ $key + 1 }}</td>
+                                        <td class="text-left">{{ $student['student']['first_name'] }} {{ $student['student']['middle_name'] }} {{ $student['student']['last_name'] }}</td>
+                                        <td class="text-left">{{ $student['student']['reg_number'] }} </td>
+                                        <td class="text-center">{{ $total_credits }}</td>
+                                        <td class="text-center">{{ $total_pe }}</td>
+                                            @php
+                                            $gpa = number_format($total_pe/$total_credits, 2);
+                                            @endphp
+                                        <td class="text-center">{{ $gpa }}</td>
+                                        <td>
+                                        @if (!empty($cos))
+                                            @foreach ($cos as $co)
+                                                {{$co}}@if(!$loop->last), @endif
+                                            @endforeach
+                                        @endif
+                                        </td>
+                                        <td>
+                                            @foreach ($absents as $absent)
+                                            @if($loop->first)Absent in @endif  @php $code = App\Models\Course::find($absent)->course_code @endphp {{ $code }} @if(!$loop->last), @endif
+                                            @endforeach
+                                        </td>
+                                    </tr>
+
+                                    @php
+                                    $data = App\Models\StoredPoints::where('institution_id',$institution->id)->where('level_order',1)->where('semester','first')->where('user_id', $student->user_id)->first();
+                                        if($data)
+                                    {
+                                        $data->tcr = $total_credits;
+                                        $data->tce = $total_credits-$total_co;
+                                        $data->tpe = $total_pe;
+                                        $data->gpa = $gpa;
+                                        if($cos == []){
+                                            $data->cos = '';
+                                        }else{
+                                            $data->cos = implode(',', $cos);
+                                        }
+                                        $data->update();
+                    
+                                    }else
+                                    {
+                                        $data = new App\Models\StoredPoints();
+                                        $data->institution_id = $institution->id;
+                                        $data->level_order = 1;
+                                        $data->semester = 'first';
+                                        $data->user_id = $student->user_id;
+                                        $data->tcr = $total_credits;
+                                        $data->tce = $total_credits-$total_co;
+                                        $data->tpe = $total_pe;
+                                        $data->gpa = $gpa;
+                                        if($cos == []){
+                                            $data->cos = '';
+                                        }else{
+                                            $data->cos = implode(',', $cos);
+                                        }
+                                        $data->save();
                                     }
-                                    $data->save();
-                                }
-                            
-                                @endphp
+                                
+                                    @endphp
 
-                                @php
-                                    $total_pe = 0;
-                                    $total_credits = 0;
-                                    $total_co = 0;
-                                    $cos = [];
-                                    $absents = [];
-                                    // $co_students = [];
-                                @endphp
-
-                            @endforeach
+                                    @php
+                                        $total_pe = 0;
+                                        $total_credits = 0;
+                                        $total_co = 0;
+                                        $cos = [];
+                                        $absents = [];
+                                        // $co_students = [];
+                                    @endphp
+                                
+                                @endforeach
+                            @endif
                         </tbody>
                     </table>
                 </div>

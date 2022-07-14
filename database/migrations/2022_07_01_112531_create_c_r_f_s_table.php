@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('semester');
             $table->integer('level_id');
             $table->integer('course_id');
+            $table->string('type')->default('Regular');
             $table->timestamps();
         });
     }

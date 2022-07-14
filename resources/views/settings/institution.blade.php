@@ -20,7 +20,7 @@
                            <ul class="nav nav-pills nav-left flex-column" role="tablist">
                               <!-- payment -->
                               <li class="nav-item">
-                                    <a class="nav-link active" id="payment" data-bs-toggle="pill" href="#faq-payment"
+                                    <a class="nav-link active" id="basic" data-bs-toggle="pill" href="#settings-basic"
                                        aria-expanded="true" role="tab">
                                        <i data-feather="credit-card" class="font-medium-3 me-1"></i>
                                        <span class="fw-bold">Basic</span>
@@ -29,10 +29,10 @@
 
                               <!-- delivery -->
                               <li class="nav-item">
-                                    <a class="nav-link" id="delivery" data-bs-toggle="pill" href="#faq-delivery"
+                                    <a class="nav-link" id="result" data-bs-toggle="pill" href="#settings-result"
                                        aria-expanded="false" role="tab">
                                        <i data-feather="shopping-bag" class="font-medium-3 me-1"></i>
-                                       <span class="fw-bold">Account</span>
+                                       <span class="fw-bold">Result</span>
                                     </a>
                               </li>
 
@@ -50,7 +50,7 @@
                                     <a class="nav-link" id="my-order" data-bs-toggle="pill" href="#faq-my-order"
                                        aria-expanded="false" role="tab">
                                        <i data-feather="package" class="font-medium-3 me-1"></i>
-                                       <span class="fw-bold">Result</span>
+                                       <span class="fw-bold">Account</span>
                                     </a>
                               </li>
 
@@ -74,8 +74,8 @@
                               <div class="tab-content">
 
                                     <!-- payment panel -->
-                                    <div role="tabpanel" class="tab-pane active" id="faq-payment"
-                                       aria-labelledby="payment" aria-expanded="true">
+                                    <div role="tabpanel" class="tab-pane active" id="settings-basic"
+                                       aria-labelledby="Basic Settings" aria-expanded="true">
 
                                        <div> <ul id="error_list"></ul></div>
                                        <!-- form -->
@@ -104,7 +104,6 @@
                                        </div>
                                        <!--/ header section -->
 
-                                 
                                           <div class="row mt-2 pt-50">
 
                                                 <div class="col-12 col-sm-6 mb-1">
@@ -172,21 +171,87 @@
                                        <!--/ form -->
                                     </div>
 
-                                    <!-- delivery panel -->
-                                    <div class="tab-pane" id="faq-delivery" role="tabpanel"
-                                       aria-labelledby="delivery" aria-expanded="false">
-                                       <!-- icon and header -->
-                                       <div class="d-flex align-items-center">
-                                          <div class="avatar avatar-tag bg-light-primary me-1">
-                                                <i data-feather="shopping-bag" class="font-medium-4"></i>
-                                          </div>
-                                          <div>
-                                                <h4 class="mb-0">Delivery</h4>
-                                                <span>Which license do I need?</span>
-                                          </div>
-                                       </div>
+                                    <!-- payment panel -->
+                                    <div role="tabpanel" class="tab-pane" id="settings-result" aria-labelledby="Result Settings" aria-expanded="true">
 
+                                       <div class="card">
+                                          <div class="card-body">
+                                              <h4 class="card-title mb-75">Result Settings</h4>
+                                             
+                                              <!-- Connections -->
+                                              <div class="d-flex mt-2">
+                                                  <div class="d-flex align-item-center justify-content-between flex-grow-1">
+                                                      <div class="me-1">
+                                                          <p class="fw-bolder mb-0">Withhold Defaulters' Result</p>
+                                                      </div>
+                                                      <div class="mt-50 mt-sm-0">
+                                                          <div class="form-check form-switch form-check-primary">
+                                                              <input type="checkbox" class="form-check-input" id="withhold" {{ $result->withhold == 1 ? 'checked': ''}} />
+                                                              <label class="form-check-label" for="withhold">
+                                                                  <span class="switch-icon-left"><i data-feather="check"></i></span>
+                                                                  <span class="switch-icon-right"><i data-feather="x"></i></span>
+                                                              </label>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                              <div class="d-flex mt-2">
+                                                  <div class="d-flex align-item-center justify-content-between flex-grow-1">
+                                                      <div class="me-1">
+                                                          <p class="fw-bolder mb-0">Show Marks in  Students' Script</p>
+                                                      </div>
+                                                      <div class="mt-50 mt-sm-0">
+                                                          <div class="form-check form-switch form-check-primary">
+                                                              <input type="checkbox" class="form-check-input" id="show_marks" {{ $result->show_marks == 1 ? 'checked': ''}} />
+                                                              <label class="form-check-label" for="show_marks">
+                                                                  <span class="switch-icon-left"><i data-feather="check"></i></span>
+                                                                  <span class="switch-icon-right"><i data-feather="x"></i></span>
+                                                              </label>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                              <div class="d-flex mt-2">
+                                                  <div class="d-flex align-item-center justify-content-between flex-grow-1">
+                                                      <div class="me-1">
+                                                          <p class="fw-bolder mb-0">Allow Students to check CA Result</p>
+                                                      </div>
+                                                      <div class="mt-50 mt-sm-0">
+                                                          <div class="form-check form-switch form-check-primary">
+                                                              <input type="checkbox" class="form-check-input" id="check_ca" {{ $result->check_ca == 1 ? 'checked': ''}} />
+                                                              <label class="form-check-label" for="check_ca">
+                                                                  <span class="switch-icon-left"><i data-feather="check"></i></span>
+                                                                  <span class="switch-icon-right"><i data-feather="x"></i></span>
+                                                              </label>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                              <div class="d-flex mt-2">
+                                                  <div class="d-flex align-item-center justify-content-between flex-grow-1">
+                                                      <div class="me-1">
+                                                          <p class="fw-bolder mb-0">Disable Students from checking their Result</p>
+                                                      </div>
+                                                      <div class="mt-50 mt-sm-0">
+                                                          <div class="form-check form-switch form-check-primary">
+                                                              <input type="checkbox" class="form-check-input" id="disable_result_check" {{ $result->disable_result_check == 1 ? 'checked': ''}} />
+                                                              <label class="form-check-label" for="disable_result_check">
+                                                                  <span class="switch-icon-left"><i data-feather="check"></i></span>
+                                                                  <span class="switch-icon-right"><i data-feather="x"></i></span>
+                                                              </label>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+
+                               
+                                              <!-- /Connections -->
+                                          </div>
+                                      </div>
+                                     
                                     </div>
+
+                               
 
 
                               </div>
@@ -318,4 +383,5 @@
 
         });
     </script>
+    @include('settings.institution_script')
 @endsection

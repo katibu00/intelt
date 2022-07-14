@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Models\Institution;
+use App\Models\ResultSettings;
 use App\Models\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File as File;
-use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Support\Facades\Validator;
 
 class InstitutionController extends Controller
@@ -17,32 +17,33 @@ class InstitutionController extends Controller
     {
         $institution_id = Auth::user()->institution_id;
         $data['institution'] = Institution::where('id', $institution_id)->first();
-        $data['sessions'] = Session::where('institution_id',$institution_id)->get();
+        $data['sessions'] = Session::where('institution_id', $institution_id)->get();
+        $data['result'] = ResultSettings::where('institution_id', $institution_id)->first();
+        
         return view('settings.institution', $data);
     }
 
     public function basic(Request $request)
     {
-        // dd($request->all());
-
-       $validator = Validator::make($request->all(), [
-        'name'=>'required',
-        'address'=>'required',
-        'phone'=>'required',
-        'email'=>'required|email',
-        'website'=>'required',
-        'semester'=>'required',
-        'session_id'=>'required',
-    ]);
-   
-    if($validator->fails()){
-        return response()->json([
-            'status'=>400,
-            'errors'=>$validator->messages(),
-            'message'=>'Check your input and try again',
+    
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'address' => 'required',
+            'phone' => 'required',
+            'email' => 'required|email',
+            'website' => 'required',
+            'semester' => 'required',
+            'session_id' => 'required',
         ]);
-    }
-      
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'errors' => $validator->messages(),
+                'message' => 'Check your input and try again',
+            ]);
+        }
+
         $institution_id = Auth::user()->institution_id;
         $institution = Institution::FindorFail($institution_id);
 
@@ -54,7 +55,7 @@ class InstitutionController extends Controller
         $institution->website = $request->website;
         $institution->session_id = $request->session_id;
         $institution->semester = $request->semester;
-       
+
         if ($request->file('logo') != null) {
             $destination = 'uploads/' . $institution->username . '/' . $institution->logo;
             File::delete($destination);
@@ -67,11 +68,39 @@ class InstitutionController extends Controller
 
         $institution->update();
 
-
         return response()->json([
-            'status'=>200,
-            'message'=>'Institution settings Updated sucessfully',
+            'status' => 200,
+            'message' => 'Institution settings Updated sucessfully',
         ]);
+    }
+
+
+    public function toogleResult(Request $request)
+    {
+        // dd($request->all());
+        $institution_id = Auth::user()->institution_id;
+
+        $settings = ResultSettings::where('institution_id', $institution_id)->first();
+
+        if($settings){
+            $field = $request->field;
+            $settings->$field = $request->value;
+            $settings->update();
+
+            return response()->json([
+                'status' => 200,
+                'type' => 'success',
+                'message' => 'Settings Saved Successfully',
+            ]);
+
+        }else
+        {
+            return response()->json([
+                'status' => 200,
+                'type' => 'error',
+                'message' => 'Error Occured.',
+            ]);
+        }
     }
 
 }

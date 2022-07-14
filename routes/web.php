@@ -15,6 +15,7 @@ use App\Http\Controllers\IntelliSAS\InstitutionsController;
 use App\Http\Controllers\MarksController;
 use App\Http\Controllers\ResultSummaryController;
 use App\Http\Controllers\Student\CourseRegistrationController;
+use App\Http\Controllers\Student\StudentProfileController;
 use App\Http\Controllers\Student\StudentResultController;
 use App\Http\Controllers\Users\StudentsController;
 use App\Http\Controllers\UsersController;
@@ -116,6 +117,12 @@ Route::group(['prefix' => 'student/result', 'middleware' => ['auth', 'student']]
 Route::group(['prefix' => 'admin/result', 'middleware' => ['auth', 'admin']], function(){ 
     Route::get('/summary/index',  [ResultSummaryController::class, 'index'])->name('admin.result.summary.index');
     Route::post('/summary/generate',  [ResultSummaryController::class, 'generate'])->name('admin.result.summary.generate');
+    Route::post('/toogle-result-settings',  [InstitutionController::class, 'toogleResult'])->name('toogle-result-settings');
+});
+
+Route::group(['prefix' => 'student/profile', 'middleware' => ['auth', 'student']], function(){ 
+    Route::get('/index',  [StudentProfileController::class, 'index'])->name('student.profile.index');
+  
 });
 
 

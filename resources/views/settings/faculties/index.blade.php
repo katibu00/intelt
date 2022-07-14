@@ -42,10 +42,13 @@
                       </div>
                       
                       <div class="table-responsive table-data">
-                        @include('settings.faculties.table')
-                        
+                        @include('settings.faculties.table') 
                       </div>
-                  
+                      <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center mt-2">
+                          {{ $allData->links() }}
+                        </ul>
+                    </nav>
                       
                   </div>
               </div>

@@ -58,24 +58,31 @@ class CourseRegistrationController extends Controller
         $user = Auth::user();
         $institution = Institution::where('id', $user->institution_id)->first();
 
-        // $progress = StudentProgress::where('institution_id',$institution->id)->where('session_id',$institution->session_id)->where('user_id',$user->id)->first();
-        // if(!$progress || $progress->profile != 1){
-        //     return response()->json([
-        //         'status' => 400,
-        //         'message' => 'Please Update your profile first.',
-        //     ]);
-        // }
-        // if($progress->courses == 1){
-        //     return response()->json([
-        //         'status' => 400,
-        //         'message' => 'You have already Submitted Your Courses.',
-        //     ]);
-        // }
+        $progress = StudentProgress::where('institution_id',$institution->id)->where('session_id',$institution->session_id)->where('user_id',$user->id)->first();
+        if(!$progress || $progress->profile != 1){
+            return response()->json([
+                'status' => 400,
+                'message' => 'Please Update your profile first.',
+            ]);
+        }
+        if($progress->courses == 1){
+            return response()->json([
+                'status' => 400,
+                'message' => 'You have already Submitted Your Courses.',
+            ]);
+        }
 
         $courseCount = count($request->course_id);
 
         if($courseCount != NULL){
             for ($i=0; $i < $courseCount; $i++){
+
+                $type = null;
+                $isCO = StoredCO::where('user_id',$user->id)->where('course_id',$request->course_id[$i])->where('cleared',null)->first();
+                if($isCO)
+                {
+                    $type = 'CO';
+                }
                 $course = new CRF();
                 $course->institution_id = $user->institution_id;
                 $course->user_id = $user->id;
@@ -83,12 +90,13 @@ class CourseRegistrationController extends Controller
                 $course->semester = $institution->semester;
                 $course->level_order = $user['level']['order'];
                 $course->course_id = $request->course_id[$i];
+                $course->type = $type;
                 $course->save();
             }
         }
 
-        // $progress->courses = 1;
-        // $progress->update();
+        $progress->courses = 1;
+        $progress->update();
 
         return response()->json([
             'status' => 200,

@@ -99,6 +99,12 @@
                         <th class="text-center"  style="width: 12%;">Code</th>
                         <th style="width: 50%;">Course Title</th>
                         <th class="text-center" style="width: 7%;" >Credits</th>
+                        @php
+                            $showMarks = App\Models\ResultSettings::where('institution_id', $institution->id)->first();
+                        @endphp
+                        @if($showMarks->show_marks == 1)
+                        <th class="text-center"  style="width: 7%;">Marks</th>
+                        @endif
                         <th class="text-center"  style="width: 7%;">Grade</th>
                         <th class="text-center"  style="width: 7%;">GP</th>
                         <th class="text-center"  style="width: 7%;">PE</th>
@@ -139,6 +145,9 @@
                             <td class="text-center">{{$course['course']['course_code']}}</td>
                             <td class="text-left">{{$course['course']['course_title']}}</td>
                             <td class="text-center">{{$course['course']['credit_unit']}}</td>
+                            @if($showMarks->show_marks == 1)
+                                <td class="text-center">{{ $total_score }}</td>
+                            @endif
                             @php
                                 $grade_marks = App\Models\Grade::where([['start_mark','<=',(int)$total_score],['end_mark','>=',(int)$total_score]])->first();
                                 $letter_grade = $grade_marks->letter_grade;
@@ -157,12 +166,12 @@
                     @endforeach
                     <tr>
                         <td colspan="3"></td>
-                        <td colspan="5" class="text-center"><strong>GPA  &nbsp;=&nbsp; {{number_format((float)$gpa,2)}}</strong></td>
+                        <td colspan="{{ $showMarks->show_marks == 1? 6:5}}" class="text-center"><strong>GPA  &nbsp;=&nbsp; {{number_format((float)$gpa,2)}}</strong></td>
                     </tr>
 
                     <tr>
                         <td colspan="3"></td>
-                        <td colspan="5" class="text-center"><strong>TPE = {{number_format((float)$total_pe,2)}} | TCR = {{number_format((float)$total_credits,2)}} | TCE = {{number_format(($total_credits-$total_co),2)}} </strong></td>
+                        <td colspan="{{ $showMarks->show_marks == 1? 6:5}}" class="text-center"><strong>TPE = {{number_format((float)$total_pe,2)}} | TCR = {{number_format((float)$total_credits,2)}} | TCE = {{number_format(($total_credits-$total_co),2)}} </strong></td>
                     </tr>
                 </tbody>
             </table>

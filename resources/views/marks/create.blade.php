@@ -21,7 +21,7 @@
                                             <span style="font-size: 12px; font-weight: normal;" id="remaining">{{ $students->count() - @$marked}} remaining</span>
                                         </div>
                                         <div class="progress mb-50" style="height: 8px">
-                                            <div class="progress-bar" role="progressbar" style="width: {{ @$marked/$students->count()*100 }}%" aria-valuenow="6" aria-valuemax="100" aria-valuemin="0"></div>
+                                            <div class="progress-bar" role="progressbar" style="width: {{ @$marked/@$students->count()*100 }}%" aria-valuenow="6" aria-valuemax="100" aria-valuemin="0"></div>
                                         </div>
                                        
                                     </div>
@@ -81,7 +81,7 @@
                                                                 <td>{{ $key + 1}}</td>
                                                                 <td>{{ $student['student']['reg_number'] }}</td>
                                                                 <td>{{ $student['student']['first_name'] }} {{ $student['student']['middle_name'] }} {{ $student['student']['last_name'] }}</td>
-                                                                <td>Regular</td>
+                                                                <td>{{ $student->type == 'CO' ? 'CO':'Regular'}}</td>
                                                                 <td class="text-center"><input type="checkbox" {{ @$student->absent == 'absent'? 'checked':'' }} class="absent" data-user_id="{{ $student['student']['id'] }}" data-reg_number="{{ $student['student']['reg_number'] }}" data-marks="{{ @$student->marks == 0 ? '': $student->marks }}"></td>
                                                                 <td><input type="hidden" name="user_id[]" value="{{ $student['student']['id'] }}"><input type="{{ @$student->absent == 'absent'? 'text':'number' }}" max="70" class="form-control form-control-sm" id="marks" name="marks" data-user_id="{{ $student['student']['id'] }}" value="{{ @$student->absent == 'absent'? 'absent': $student->marks }}"></td>
                                                             </tr>

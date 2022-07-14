@@ -42,6 +42,13 @@ class ResultSummaryController extends Controller
                                     $query->where('department_id', $department);
                                 })
                                 ->groupBy('user_id')->get();
+        if( $data['students']->count() == 0)
+        {
+            return response()->json([
+                'status' => 104,
+                'message' => 'No Marked Students have been Found.'
+            ]);
+        }
         $data['session_id'] = $request->session_id;
         $pdf = Pdf::loadView('pdf.result.others.summary.first', $data)->setPaper('a4', 'landscape');;
         $path = public_path('pdf/');

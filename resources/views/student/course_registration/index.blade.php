@@ -74,11 +74,7 @@
                                 <h5>Elective Courses</h5>
                                 <div class="table-responsive">
                                     <table class="table table-sm table-bordered mb-2" style="font-size: 10px;">
-                                       
-                                        <tbody id="elective-courses-tr">
-                                           
-                                          
-                                        </tbody>
+                                        <tbody id="elective-courses-tr"> </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -87,19 +83,13 @@
                                 <h5>Carry Over(s)</h5>
                                 <div class="table-responsive">
                                     <table class="table table-sm table-bordered mb-2" style="font-size: 10px;">
-                                       
-                                        <tbody id="co-courses-tr">
-                                           
-                                          
-                                        </tbody>
+                                        <tbody id="co-courses-tr"></tbody>
                                     </table>
                                 </div>
                             </div>
-
-                            </div>
+                           </div>
                         </div>
                     </div>
-
 
                     <div class="col-md-6 col-12">
                         <div class="card">
@@ -125,10 +115,7 @@
                                                 <th></th>
                                             </tr>
                                         </thead>
-                                        <tbody id="registered-courses-tr">
-                                            
-                                          
-                                        </tbody>
+                                        <tbody id="registered-courses-tr"> </tbody>
                                     </table>
 
                                     <h5>Registration Summary</h5>
@@ -169,12 +156,10 @@
                 </div>
             </section>
             <!-- Basic Horizontal form layout section end -->
-
         </div>
     </div>
 </div>
 <!-- END: Content-->
-
  @endsection
 
  @section('js')

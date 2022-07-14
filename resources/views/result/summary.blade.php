@@ -97,30 +97,7 @@
             },
             success: function(response){
               
-                if(response.status == 404){
-
-                    $('.download_btn').html("Generate");
-                    $('.download_btn').attr("disabled", false);
-
-                    Command: toastr["error"](response.message)
-                    toastr.options = {
-                        "closeButton": false,
-                        "debug": false,
-                        "newestOnTop": false,
-                        "progressBar": false,
-                        "positionClass": "toast-top-right",
-                        "preventDuplicates": false,
-                        "onclick": null,
-                        "showDuration": "300",
-                        "hideDuration": "1000",
-                        "timeOut": "5000",
-                        "extendedTimeOut": "1000",
-                        "showEasing": "swing",
-                        "hideEasing": "linear",
-                        "showMethod": "fadeIn",
-                        "hideMethod": "fadeOut"
-                    }
-                }else{
+     
                     var blob = new Blob([response]);
                     var link = document.createElement('a');
                     link.href = window.URL.createObjectURL(blob);
@@ -128,10 +105,30 @@
                     link.click();
                     $('.download_btn').html("Generate");
                     $('.download_btn').attr("disabled", false);
-                }
+                
             },
             error: function(blob){
-                console.log(blob);
+                Command: toastr["error"]('No Marked Students Found.')
+                toastr.options = {
+                    "closeButton": false,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": false,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                }
+
+                $('.download_btn').html("Generate");
+                $('.download_btn').attr("disabled", false);
             }
         })
     });

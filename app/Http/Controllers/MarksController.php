@@ -62,6 +62,11 @@ class MarksController extends Controller
         }else{
             $data['initial'] = 'yes'; 
             $data['students'] = CRF::with(['student','level'])->where('institution_id',$school_id)->where('course_id', $request->course_id)->where('session_id',$session)->where('semester',$semester)->orderBy('user_id','ASC')->get();
+           if( $data['students']->count() == 0)
+           {
+            Toastr::error('No Registered students Found');
+            return redirect()->back();
+           }
             return view('marks.create', $data);
         }
        
