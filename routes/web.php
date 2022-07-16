@@ -54,6 +54,7 @@ Route::group(['prefix' => 'settings', 'middleware' => ['auth',  'admin']], funct
     Route::get('/institution', [InstitutionController::class, 'index'])->name('settings.institution');
 
     Route::post('/basic', [InstitutionController::class, 'basic'])->name('basic');
+    Route::post('/registration', [InstitutionController::class, 'registration'])->name('registration');
 
     Route::get('/sessions/index', [SessionController::class, 'index'])->name('sessions.index');
     Route::post('/sessions/store', [SessionController::class, 'store'])->name('sessions.create');

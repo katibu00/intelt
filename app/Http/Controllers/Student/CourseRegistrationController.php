@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\CRF;
+use App\Models\CRSettings;
 use App\Models\Institution;
 use App\Models\Level;
 use App\Models\StoredCO;
@@ -21,18 +22,23 @@ class CourseRegistrationController extends Controller
         $institution = Institution::where('id', $institution_id)->first();
         $data['type'] = $institution->type;
         $data['levels'] = Level::where('institution_id',$institution_id)->get();
+
+        $settings = CRSettings::where('institution_id', $institution_id)->first();
+
+        if($settings->register_style == 'sessional')
+        {
+            return view('student.course_registration.session',$data);
+        }
+        if($settings->register_style == 'semestral')
+        {
+            return view('student.course_registration.semester',$data);
+        }
       
-        return view('student.course_registration.index',$data);
     }
 
     public function getRecommeded(Request $request){
    
-        // return $request->all();
-        // $institution_id = Auth::user()->institution_id;
-        // $institution = Institution::where('id', $institution_id)->first();
         $user = User::find(Auth::user()->id);
-      
-
         $regulars = Course::where('institution_id',$user->institution_id)->where('department_id','LIKE','%'.$user->department_id.'%')->where('level_order',$request->level)->where('semester',$request->semester)->where('designation','C')->get();
         $electives = Course::where('institution_id',$user->institution_id)->where('department_id','LIKE','%'.$user->department_id.'%')->where('level_order',$request->level)->where('semester',$request->semester)->where('designation','E')->get();
         $cos = StoredCO::with('course')->where('institution_id',$user->institution_id)->where('user_id',$user->id)->where('cleared',null)->get();

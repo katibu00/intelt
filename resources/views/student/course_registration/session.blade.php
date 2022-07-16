@@ -105,7 +105,8 @@
                                <form id="register_course_form">
                                 @csrf
                                 <div class="table-responsive selected-div d-none">
-                                    <table class="table table-sm table-bordered mb-2 selected-courses-table" style="font-size: 10px;">
+                                    <h6>First Semester</h6>
+                                    <table class="table table-sm table-bordered mb-2 first-selected-courses-table" style="font-size: 10px;">
                                         <thead>
                                             <tr>
                                                 <th>S/N</th>
@@ -116,6 +117,20 @@
                                             </tr>
                                         </thead>
                                         <tbody id="registered-courses-tr"> </tbody>
+                                    </table>
+
+                                    <h6>Second Semester</h6>
+                                    <table class="table table-sm table-bordered mb-2 second-selected-courses-table" style="font-size: 10px;">
+                                        <thead>
+                                            <tr>
+                                                <th>S/N</th>
+                                                <th>Code</th>
+                                                <th>title</th>
+                                                <th>CU</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="second-registered-courses-tr"></tbody>
                                     </table>
 
                                     <h5>Registration Summary</h5>
@@ -163,6 +178,6 @@
  @endsection
 
  @section('js')
-  @include('student.course_registration.scripts')
+  @include('student.course_registration.session_script')
   <script src="/backend/sweetalert.min.js"></script>
  @endsection
